@@ -11,5 +11,5 @@ coverage
 .prettierrc
 .editorconfig
 .postcssrc.json
-tsconfig*.json
+tsconfig.tsbuildinfo
 components.json

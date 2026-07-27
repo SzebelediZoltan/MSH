@@ -68,6 +68,11 @@ export const routes: Routes = [
         },
       },
       {
+        path: 'settings',
+        loadComponent: () =>
+          import('./settings/settings.component').then((m) => m.SettingsComponent),
+      },
+      {
         path: 'admin/users',
         loadComponent: () =>
           import('./admin/users/users.component').then((m) => m.UsersComponent),

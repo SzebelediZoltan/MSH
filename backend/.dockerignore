@@ -9,5 +9,5 @@ test
 coverage
 .prettierrc
 eslint.config.mjs
-nest-cli.json
-tsconfig*.json
+# nest-cli.json is needed for build
+tsconfig.tsbuildinfo

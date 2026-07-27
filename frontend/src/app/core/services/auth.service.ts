@@ -6,9 +6,10 @@ import { ApiService } from './api.service';
 export interface User {
   id: string;
   email: string;
-  name?: string;
+  name: string;
   role: 'ADMIN' | 'EDITOR' | 'VIEWER';
-  emailVerified?: boolean;
+  emailVerified: boolean;
+  avatarKey: string | null;
   createdAt?: string;
 }
 
@@ -92,6 +93,16 @@ export class AuthService {
 
   getCurrentUserValue(): User | null {
     return this.currentUserSubject.value;
+  }
+
+  updateCurrentUser(user: Partial<User>): void {
+    const current = this.currentUserSubject.value;
+    if (!current) return;
+    const updated = { ...current, ...user };
+    if (this.isBrowser) {
+      localStorage.setItem(USER_KEY, JSON.stringify(updated));
+    }
+    this.currentUserSubject.next(updated);
   }
 
   getToken(): string | null {

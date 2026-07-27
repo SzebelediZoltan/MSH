@@ -67,6 +67,26 @@
       <hlm-separator />
     </div>
 
+    <a
+      routerLink="/app/settings"
+      routerLinkActive="bg-sidebar-accent text-sidebar-accent-foreground before:opacity-100"
+      class="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground relative flex w-full items-center gap-3 rounded-lg py-2 text-sm font-medium transition-all duration-300 before:absolute before:left-0 before:top-1/2 before:h-5 before:w-0.5 before:-translate-y-1/2 before:rounded-full before:bg-primary before:opacity-0 before:transition-opacity before:duration-300"
+      [class.px-[14px]]="collapsed()"
+      [class.px-3]="!collapsed()"
+      [hlmTooltip]="'Settings'"
+      [tooltipDisabled]="!collapsed()"
+      [position]="'right'"
+    >
+      <ng-icon name="lucideSettings" class="h-5 w-5 shrink-0" />
+      @if (!collapsed()) {
+        <span>Settings</span>
+      }
+    </a>
+
+    <div class="my-1">
+      <hlm-separator />
+    </div>
+
     @if (isAdmin()) {
       <a
         routerLink="/app/admin/users"
@@ -95,8 +115,17 @@
       [class.gap-0]="collapsed()"
     >
       <hlm-avatar class="h-8 w-8 shrink-0 rounded-lg">
-        <div class="bg-sidebar-primary flex h-full w-full items-center justify-center rounded-lg text-xs font-medium text-sidebar-primary-foreground">
-          {{ currentUser()?.name?.charAt(0) ?? '?' }}
+        <div class="bg-sidebar-primary flex h-full w-full items-center justify-center rounded-lg text-xs font-medium text-sidebar-primary-foreground overflow-hidden">
+          @if (currentUser()?.avatarKey; as key) {
+            <img
+              [src]="'http://localhost:9000/msh-models/' + key"
+              alt="Avatar"
+              class="h-full w-full rounded-lg object-cover"
+              (error)="currentUser.update(u => u ? { ...u, avatarKey: null } : null)"
+            />
+          } @else {
+            {{ currentUser()?.name?.charAt(0) ?? '?' }}
+          }
         </div>
       </hlm-avatar>
       @if (!collapsed()) {

@@ -45,6 +45,7 @@ model User {
   name               String    @map("name")
   role               Role      @default(VIEWER) @map("role")
   emailVerified      Boolean   @default(false) @map("email_verified")
+  avatarKey          String?   @map("avatar_key")
   verifyCode          String?   @map("verify_code")
   verifyCodeExpiresAt DateTime? @map("verify_code_expires_at")
   verifyAttemptCount  Int       @default(0) @map("verify_attempt_count")

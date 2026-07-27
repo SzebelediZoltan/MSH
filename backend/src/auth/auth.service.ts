@@ -97,6 +97,7 @@ export class AuthService {
         name: true,
         role: true,
         emailVerified: true,
+        avatarKey: true,
         createdAt: true,
       },
     });
@@ -181,8 +182,10 @@ export class AuthService {
   private generateTokens(user: {
     id: string;
     email: string;
+    name: string;
     role: string;
     emailVerified: boolean;
+    avatarKey: string | null;
   }) {
     const payload = {
       sub: user.id,
@@ -198,8 +201,10 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
+        name: user.name,
         role: user.role,
         emailVerified: user.emailVerified,
+        avatarKey: user.avatarKey,
       },
     };
   }
