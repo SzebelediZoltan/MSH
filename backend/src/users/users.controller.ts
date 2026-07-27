@@ -1,17 +1,26 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Delete,
   Param,
   Body,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { UpdateRoleDto } from './dto/update-role.dto.js';
 import { UserQueryDto } from './dto/user-query.dto.js';
+import { UpdateProfileDto } from './dto/update-profile.dto.js';
+import { ChangePasswordDto } from './dto/change-password.dto.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { RolesGuard } from '../auth/guards/roles.guard.js';
 import { Roles } from '../auth/decorators/roles.decorator.js';
@@ -23,6 +32,49 @@ import { Role } from './role.enum.js';
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Patch('me')
+  updateProfile(
+    @CurrentUser('sub') userId: string,
+    @Body() dto: UpdateProfileDto,
+  ) {
+    return this.usersService.updateProfile(userId, dto);
+  }
+
+  @Post('me/avatar')
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024 } }))
+  uploadAvatar(
+    @CurrentUser('sub') userId: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
+          new FileTypeValidator({ fileType: /^image\/(jpeg|png|webp|gif|avif)$/ }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return this.usersService.uploadAvatar(userId, file);
+  }
+
+  @Delete('me/avatar')
+  deleteAvatar(@CurrentUser('sub') userId: string) {
+    return this.usersService.deleteAvatar(userId);
+  }
+
+  @Post('me/password')
+  changePassword(
+    @CurrentUser('sub') userId: string,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.usersService.changePassword(userId, dto);
+  }
+
+  @Delete('me')
+  deleteAccount(@CurrentUser('sub') userId: string) {
+    return this.usersService.deleteAccount(userId);
+  }
 
   @Get()
   @Roles(Role.ADMIN)

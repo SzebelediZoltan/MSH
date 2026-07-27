@@ -48,4 +48,27 @@ export class ApiService {
   getAllModels(): Observable<any[]> {
     return this.get<any[]>('/models');
   }
+
+  updateProfile(data: { name?: string; email?: string }): Observable<any> {
+    return this.patch<any>('/users/me', data);
+  }
+
+  uploadAvatar(file: File): Observable<any> {
+    const fd = new FormData();
+    fd.append('file', file);
+    const req = new HttpRequest('POST', `${API_BASE_URL}/users/me/avatar`, fd);
+    return this.http.request<any>(req);
+  }
+
+  deleteAvatar(): Observable<any> {
+    return this.delete<any>('/users/me/avatar');
+  }
+
+  changePassword(data: { currentPassword: string; newPassword: string }): Observable<any> {
+    return this.post<any>('/users/me/password', data);
+  }
+
+  deleteAccount(): Observable<any> {
+    return this.delete<any>('/users/me');
+  }
 }

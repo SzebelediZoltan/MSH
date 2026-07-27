@@ -9,6 +9,6 @@ test
 coverage
 .prettierrc
 nest-cli.json
-tsconfig*.json
+tsconfig.tsbuildinfo
 publish-test.cjs
 scripts
