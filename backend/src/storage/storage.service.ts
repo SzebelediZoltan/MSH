@@ -11,9 +11,8 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 @Injectable()
 export class StorageService {
   private readonly client: S3Client;
+  private readonly presignClient: S3Client;
   private readonly bucket: string;
-  private readonly internalBase: string;
-  private readonly publicBase: string;
 
   constructor() {
     const endpoint = process.env.MINIO_ENDPOINT ?? 'localhost';
@@ -27,16 +26,22 @@ export class StorageService {
     const publicPort = process.env.MINIO_PUBLIC_PORT ?? port;
     const scheme = useSsl ? 'https' : 'http';
 
-    this.internalBase = `${scheme}://${endpoint}:${port}/${this.bucket}/`;
-    this.publicBase = `${scheme}://${publicEndpoint}:${publicPort}/${this.bucket}/`;
+    const credentials = {
+      accessKeyId: accessKey,
+      secretAccessKey: secretKey,
+    };
 
     this.client = new S3Client({
       region: 'us-east-1',
       endpoint: `${scheme}://${endpoint}:${port}`,
-      credentials: {
-        accessKeyId: accessKey,
-        secretAccessKey: secretKey,
-      },
+      credentials,
+      forcePathStyle: true,
+    });
+
+    this.presignClient = new S3Client({
+      region: 'us-east-1',
+      endpoint: `${scheme}://${publicEndpoint}:${publicPort}`,
+      credentials,
       forcePathStyle: true,
     });
   }
@@ -86,9 +91,7 @@ export class StorageService {
       Key: key,
     });
 
-    const url = await getSignedUrl(this.client, command, { expiresIn });
-
-    return url.replace(this.internalBase, this.publicBase);
+    return getSignedUrl(this.presignClient, command, { expiresIn });
   }
 
   async delete(key: string): Promise<void> {

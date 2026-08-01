@@ -13,6 +13,10 @@ export class ApiService {
     return this.http.get<T>(`${API_BASE_URL}${path}`, { params });
   }
 
+  getText(path: string, params?: HttpParams): Observable<string> {
+    return this.http.get(`${API_BASE_URL}${path}`, { params, responseType: 'text' });
+  }
+
   post<T>(path: string, body?: unknown): Observable<T> {
     return this.http.post<T>(`${API_BASE_URL}${path}`, body);
   }

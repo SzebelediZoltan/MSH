@@ -21,6 +21,8 @@
     "@angular/platform-server": "^22.0.0",
     "@angular/router": "^22.0.0",
     "@angular/ssr": "^22.0.4",
+    "@babylonjs/core": "^9.19.0",
+    "@babylonjs/loaders": "^9.19.0",
     "@ng-icons/core": "^32.2.0",
     "@ng-icons/lucide": "^32.2.0",
     "@spartan-ng/brain": "^1.0.2",
