@@ -86,6 +86,12 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'viewer/:id',
+    loadComponent: () =>
+      import('./viewer/viewer.component').then((m) => m.ViewerComponent),
+    canActivate: [authGuard],
+  },
+  {
     path: '**',
     loadComponent: () =>
       import('./shared/not-found/not-found.component').then(

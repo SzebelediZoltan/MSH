@@ -53,6 +53,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-msh}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-msh_secret}
+      MINIO_API_CORS_ALLOW_ORIGIN: "http://localhost:4000,http://127.0.0.1:4000"
     volumes:
       - minio_data:/data
     networks:
@@ -73,13 +74,15 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-msh}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-msh_secret}
-    entrypoint: >
-      /bin/sh -c "
-      mc alias set msh http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} &&
-      mc mb --ignore-existing msh/msh-models &&
-      mc anonymous set download msh/msh-models &&
-      echo 'Bucket created and policy applied'
-      "
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -e
+        mc alias set msh http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD}
+        mc mb --ignore-existing msh/msh-models
+        mc anonymous set download msh/msh-models
+        echo 'Bucket created and download policy applied'
     networks:
       - msh_network
 
@@ -147,7 +150,7 @@ services:
       MINIO_PUBLIC_ENDPOINT: ${MINIO_PUBLIC_ENDPOINT:-localhost}
       MINIO_PUBLIC_PORT: ${MINIO_PUBLIC_PORT:-9000}
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3001/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
       interval: 10s
       timeout: 5s
       retries: 3
