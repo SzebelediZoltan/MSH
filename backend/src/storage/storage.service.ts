@@ -7,6 +7,7 @@ import {
   CopyObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { requiredEnv } from '../config/env.js';
 
 @Injectable()
 export class StorageService {
@@ -18,8 +19,8 @@ export class StorageService {
   constructor() {
     const endpoint = process.env.MINIO_ENDPOINT ?? 'localhost';
     const port = process.env.MINIO_PORT ?? '9000';
-    const accessKey = process.env.MINIO_ACCESS_KEY ?? 'msh';
-    const secretKey = process.env.MINIO_SECRET_KEY ?? 'msh_secret';
+    const accessKey = requiredEnv('MINIO_ACCESS_KEY');
+    const secretKey = requiredEnv('MINIO_SECRET_KEY');
     const useSsl = process.env.MINIO_USE_SSL === 'true';
     this.bucket = process.env.MINIO_BUCKET ?? 'msh-models';
 

@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService, User } from '../core/services/auth.service';
 import { ApiService } from '../core/services/api.service';
+import { environment } from '../../environments/environment';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
@@ -15,18 +16,21 @@ import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { BrnAlertDialogImports } from '@spartan-ng/brain/alert-dialog';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
+  lucideCheck,
+  lucideCrop,
+  lucideLoader2,
+  lucideLock,
   lucideTrash2,
   lucideUpload,
+  lucideUser,
   lucideX,
-  lucideLoader2,
-  lucideCrop,
 } from '@ng-icons/lucide';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HttpEventType } from '@angular/common/http';
 import type { HttpEvent } from '@angular/common/http';
 import { ImageCropperComponent, ImageCroppedEvent } from 'ngx-image-cropper';
 
-const MINIO_PUBLIC_URL = 'http://localhost:9000/msh-models';
+const MINIO_PUBLIC_URL = environment.minioPublicUrl;
 
 @Component({
   selector: 'app-settings',

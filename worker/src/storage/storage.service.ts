@@ -5,6 +5,7 @@ import {
   PutObjectCommand,
   HeadObjectCommand,
 } from '@aws-sdk/client-s3';
+import { requiredEnv } from '../config/env.js';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 1000;
@@ -18,8 +19,8 @@ export class StorageService {
   constructor() {
     const endpoint = process.env.MINIO_ENDPOINT ?? 'localhost';
     const port = process.env.MINIO_PORT ?? '9000';
-    const accessKey = process.env.MINIO_ACCESS_KEY ?? 'msh';
-    const secretKey = process.env.MINIO_SECRET_KEY ?? 'msh_secret';
+    const accessKey = requiredEnv('MINIO_ACCESS_KEY');
+    const secretKey = requiredEnv('MINIO_SECRET_KEY');
     const useSsl = process.env.MINIO_USE_SSL === 'true';
     this.bucket = process.env.MINIO_BUCKET ?? 'msh-models';
     const scheme = useSsl ? 'https' : 'http';

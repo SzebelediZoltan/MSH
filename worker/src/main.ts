@@ -1,8 +1,10 @@
+import './config/env.js';
 import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import { AppModule } from './app.module.js';
 import { ProcessingService } from './processing/processing.service.js';
 import type { JobMessage } from './processing/handlers/job.handler.js';
+import { requiredEnv } from './config/env.js';
 import * as amqp from 'amqplib';
 
 const logger = new Logger('Worker');
@@ -35,7 +37,7 @@ async function bootstrap() {
 
   const processingService = app.get(ProcessingService);
 
-  const url = process.env.RABBITMQ_URL || 'amqp://msh:msh_secret@localhost:5672';
+  const url = requiredEnv('RABBITMQ_URL');
   const queue = 'model_processing';
   const maxRetries = 10;
   const retryDelay = 3000;
