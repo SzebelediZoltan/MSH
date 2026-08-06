@@ -12,9 +12,8 @@ import { requiredEnv } from '../config/env.js';
 @Injectable()
 export class StorageService {
   private readonly client: S3Client;
+  private readonly publicClient: S3Client;
   private readonly bucket: string;
-  private readonly internalBase: string;
-  private readonly publicBase: string;
 
   constructor() {
     const endpoint = process.env.MINIO_ENDPOINT ?? 'localhost';
@@ -28,17 +27,22 @@ export class StorageService {
     const publicPort = process.env.MINIO_PUBLIC_PORT ?? port;
     const scheme = useSsl ? 'https' : 'http';
 
-    this.internalBase = `${scheme}://${endpoint}:${port}/${this.bucket}/`;
-    this.publicBase = `${scheme}://${publicEndpoint}:${publicPort}/${this.bucket}/`;
-
-    this.client = new S3Client({
+    const clientConfig = {
       region: 'us-east-1',
-      endpoint: `${scheme}://${endpoint}:${port}`,
       credentials: {
         accessKeyId: accessKey,
         secretAccessKey: secretKey,
       },
       forcePathStyle: true,
+    };
+
+    this.client = new S3Client({
+      ...clientConfig,
+      endpoint: `${scheme}://${endpoint}:${port}`,
+    });
+    this.publicClient = new S3Client({
+      ...clientConfig,
+      endpoint: `${scheme}://${publicEndpoint}:${publicPort}`,
     });
   }
 
@@ -87,9 +91,7 @@ export class StorageService {
       Key: key,
     });
 
-    const url = await getSignedUrl(this.client, command, { expiresIn });
-
-    return url.replace(this.internalBase, this.publicBase);
+    return getSignedUrl(this.publicClient, command, { expiresIn });
   }
 
   async delete(key: string): Promise<void> {

@@ -23,6 +23,9 @@ export function createRenderHtml(modelUrl: string, ext: string, options?: Render
   const extractSceneBlock = `
 const m=${extractScene};
 if(!m){error('Loader returned null');return;}
+const remove=[];
+m.traverse(o=>{if(o.isMesh&&/Joints/i.test(o.name))remove.push(o);});
+remove.forEach(x=>{if(x.parent)x.parent.remove(x);});
 s.add(m);
 const box=new THREE.Box3().setFromObject(m);
 const sz=box.getSize(new THREE.Vector3());

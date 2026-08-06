@@ -47,8 +47,14 @@ export class ModelsController {
   }
 
   @Get(':id/download')
-  download(@Param('id') id: string, @CurrentUser('sub') userId: string) {
-    return this.modelsService.download(id, userId);
+  async download(
+    @Param('id') id: string,
+    @CurrentUser('sub') userId: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const url = await this.modelsService.download(id, userId);
+    res.set('Content-Type', 'text/plain');
+    res.send(url);
   }
 
   @Get(':id/thumbnail')

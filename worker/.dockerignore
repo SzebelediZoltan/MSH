@@ -11,4 +11,3 @@ coverage
 nest-cli.json
 tsconfig.tsbuildinfo
 publish-test.cjs
-scripts

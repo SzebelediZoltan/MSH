@@ -32,7 +32,7 @@ function validateMessage(data: unknown): data is JobMessage {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.createApplicationContext(AppModule);
+  const app = await NestFactory.create(AppModule);
   await app.init();
 
   const processingService = app.get(ProcessingService);
@@ -156,7 +156,9 @@ async function bootstrap() {
   await connectWithRetry();
   startConsumer();
 
-  const gracefulShutdown = async (app: Awaited<ReturnType<typeof NestFactory.createApplicationContext>>): Promise<void> => {
+  await app.listen(process.env.WORKER_PORT ?? 3001);
+
+  const gracefulShutdown = async (app: { close: () => Promise<void> }): Promise<void> => {
     shuttingDown = true;
     logger.log(`Shutting down... (${activeJobs} active jobs)`);
 
