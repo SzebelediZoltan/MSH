@@ -12,7 +12,7 @@ import { requiredEnv } from '../config/env.js';
 @Injectable()
 export class StorageService {
   private readonly client: S3Client;
-  private readonly publicClient: S3Client;
+  private readonly presignClient: S3Client;
   private readonly bucket: string;
 
   constructor() {
@@ -27,22 +27,23 @@ export class StorageService {
     const publicPort = process.env.MINIO_PUBLIC_PORT ?? port;
     const scheme = useSsl ? 'https' : 'http';
 
-    const clientConfig = {
-      region: 'us-east-1',
-      credentials: {
-        accessKeyId: accessKey,
-        secretAccessKey: secretKey,
-      },
-      forcePathStyle: true,
+    const credentials = {
+      accessKeyId: accessKey,
+      secretAccessKey: secretKey,
     };
 
     this.client = new S3Client({
-      ...clientConfig,
+      region: 'us-east-1',
       endpoint: `${scheme}://${endpoint}:${port}`,
+      credentials,
+      forcePathStyle: true,
     });
-    this.publicClient = new S3Client({
-      ...clientConfig,
+
+    this.presignClient = new S3Client({
+      region: 'us-east-1',
       endpoint: `${scheme}://${publicEndpoint}:${publicPort}`,
+      credentials,
+      forcePathStyle: true,
     });
   }
 
@@ -91,7 +92,7 @@ export class StorageService {
       Key: key,
     });
 
-    return getSignedUrl(this.publicClient, command, { expiresIn });
+    return getSignedUrl(this.presignClient, command, { expiresIn });
   }
 
   async delete(key: string): Promise<void> {

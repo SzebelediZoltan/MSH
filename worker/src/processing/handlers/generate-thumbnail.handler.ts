@@ -48,7 +48,7 @@ export class GenerateThumbnailHandler implements JobHandler {
 
     const puppeteer = await import('puppeteer');
     const browser = await puppeteer.launch({
-      headless: true,
+      headless: 'shell',
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
     });
 

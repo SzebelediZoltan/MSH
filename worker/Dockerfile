@@ -14,7 +14,7 @@ RUN mkdir -p /home/appuser && chown -R appuser:appgroup /home/appuser
 ENV HOME=/home/appuser
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  ca-certificates wget fonts-liberation \
+  ca-certificates curl fonts-liberation \
   libnss3 libnspr4 libgbm1 libdrm2 \
   libxkbcommon0 libxrandr2 libxfixes3 libxdamage1 libxcomposite1 \
   libglib2.0-0 libasound2 libatk-bridge2.0-0 libatk1.0-0 \
@@ -30,6 +30,6 @@ COPY --from=builder --chown=appuser:appgroup /app/prisma ./prisma
 COPY --from=builder --chown=appuser:appgroup /app/package.json ./package.json
 COPY --from=builder --chown=appuser:appgroup /app/scripts ./scripts
 ENV PUPPETEER_CACHE_DIR=/app/.cache/puppeteer
-RUN npx puppeteer browsers install chrome && chown -R appuser:appgroup /app/.cache
+RUN npx puppeteer browsers install chrome-headless-shell && chown -R appuser:appgroup /app/.cache
 USER appuser
 CMD ["node", "dist/src/main.js"]
