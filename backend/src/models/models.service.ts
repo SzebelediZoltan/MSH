@@ -84,7 +84,7 @@ export class ModelsService {
 
     const refs = refStorageKeys.length ? refStorageKeys : undefined;
     const jobBase = { storageKey, fileName: mainFile.originalname, format: ext, refStorageKeys: refs };
-    const needsConvert = ext !== 'glb';
+    const needsConvert = ext === 'fbx' || ext === 'obj';
 
     if (needsConvert) {
       const convertJob = await this.prisma.job.create({

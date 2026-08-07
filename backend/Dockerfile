@@ -13,7 +13,8 @@ WORKDIR /app
 COPY --from=builder --chown=appuser:appgroup /app/dist ./dist
 COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
 COPY --from=builder --chown=appuser:appgroup /app/prisma ./prisma
+COPY --from=builder --chown=appuser:appgroup /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder --chown=appuser:appgroup /app/package.json ./package.json
 USER appuser
 EXPOSE 3000
-CMD ["node", "dist/main.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]

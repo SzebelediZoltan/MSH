@@ -20,10 +20,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libglib2.0-0 libasound2 libatk-bridge2.0-0 libatk1.0-0 \
   libcups2 libxshmfence1 libpango-1.0-0 libcairo2 \
   && rm -rf /var/lib/apt/lists/*
+# Blender CLI az FBX -> GLB konverzióhoz (Debian bookworm: 3.4.1)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  blender python3-numpy \
+  && rm -rf /var/lib/apt/lists/*
 COPY --from=builder --chown=appuser:appgroup /app/dist ./dist
 COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
 COPY --from=builder --chown=appuser:appgroup /app/prisma ./prisma
 COPY --from=builder --chown=appuser:appgroup /app/package.json ./package.json
+COPY --from=builder --chown=appuser:appgroup /app/scripts ./scripts
 ENV PUPPETEER_CACHE_DIR=/app/.cache/puppeteer
 RUN npx puppeteer browsers install chrome-headless-shell && chown -R appuser:appgroup /app/.cache
 USER appuser

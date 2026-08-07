@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../../core/services/auth.service';
+import { environment } from '../../../../environments/environment';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
@@ -51,6 +52,7 @@ export class SidebarComponent implements OnInit {
   collapsed = signal(false);
   currentUser = signal<User | null>(null);
   isAdmin = signal(false);
+  minioPublicUrl = environment.minioPublicUrl;
 
   ngOnInit(): void {
     this.auth.currentUser$.subscribe((user) => {

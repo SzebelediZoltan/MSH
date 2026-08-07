@@ -80,6 +80,11 @@ export class ViewerService {
       throw new Error('No meshes found in model');
     }
 
+    for (const group of result.animationGroups ?? []) {
+      group.loopAnimation = true;
+      group.start(true);
+    }
+
     let min = { x: Infinity, y: Infinity, z: Infinity };
     let max = { x: -Infinity, y: -Infinity, z: -Infinity };
 

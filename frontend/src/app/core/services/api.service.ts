@@ -2,8 +2,9 @@ import { HttpClient, HttpEvent, HttpParams, HttpRequest } from '@angular/common/
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
-export const API_BASE_URL = 'http://localhost:3000/api';
+export const API_BASE_URL = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {

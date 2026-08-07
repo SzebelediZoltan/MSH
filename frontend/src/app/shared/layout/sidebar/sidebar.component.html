@@ -118,7 +118,7 @@
         <div class="bg-sidebar-primary flex h-full w-full items-center justify-center rounded-lg text-xs font-medium text-sidebar-primary-foreground overflow-hidden">
           @if (currentUser()?.avatarKey; as key) {
             <img
-              [src]="'http://localhost:9000/msh-models/' + key"
+              [src]="minioPublicUrl + '/' + key"
               alt="Avatar"
               class="h-full w-full rounded-lg object-cover"
               (error)="currentUser.update(u => u ? { ...u, avatarKey: null } : null)"

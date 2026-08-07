@@ -1,15 +1,19 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import type ms from 'ms';
 import { AuthController } from './auth.controller.js';
 import { AuthService } from './auth.service.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 import { RolesGuard } from './guards/roles.guard.js';
+import { requiredEnv } from '../config/env.js';
 
 @Module({
   imports: [
     JwtModule.register({
-      secret: process.env.JWT_SECRET ?? 'change_me_in_production',
-      signOptions: { expiresIn: '7d' },
+      secret: requiredEnv('JWT_SECRET'),
+      signOptions: {
+        expiresIn: (process.env.JWT_EXPIRES_IN ?? '7d') as ms.StringValue,
+      },
     }),
   ],
   controllers: [AuthController],
