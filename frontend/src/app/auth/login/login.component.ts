@@ -10,6 +10,7 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmLabel } from '@spartan-ng/helm/label';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import { AuthService } from '../../core/services/auth.service';
+import { API_BASE_URL } from '../../core/services/api.service';
 
 @Component({
   selector: 'app-login',
@@ -34,13 +35,21 @@ export class LoginComponent {
   private router = inject(Router);
 
   error = '';
+  oauthError = '';
   loading = signal(false);
+  oauthLoading = signal<string | null>(null);
   showPassword = signal(false);
 
   form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
+
+  oauthLogin(provider: 'google' | 'github'): void {
+    this.oauthError = '';
+    this.oauthLoading.set(provider);
+    window.location.href = `${API_BASE_URL}/auth/${provider}`;
+  }
 
   submit(): void {
     if (this.form.invalid) return;

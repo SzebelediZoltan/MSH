@@ -82,6 +82,29 @@ export class AuthService {
     );
   }
 
+  handleOAuthSession(params: URLSearchParams): boolean {
+    const token = params.get('token');
+    const refresh = params.get('refresh');
+    const user = params.get('user');
+
+    if (!token || !user) return false;
+
+    let parsedUser: User;
+    try {
+      parsedUser = JSON.parse(user);
+    } catch {
+      return false;
+    }
+
+    if (!this.isBrowser) return true;
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(REFRESH_KEY, refresh ?? token);
+    localStorage.setItem(USER_KEY, JSON.stringify(parsedUser));
+    this.isLoggedInSubject.next(true);
+    this.currentUserSubject.next(parsedUser);
+    return true;
+  }
+
   logout(): void {
     if (!this.isBrowser) return;
     localStorage.removeItem(TOKEN_KEY);

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module.js';
+import { OAuthModule } from './auth/oauth/oauth.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { StorageModule } from './storage/storage.module.js';
 import { UsersModule } from './users/users.module.js';
@@ -16,6 +17,7 @@ import { AppService } from './app.service.js';
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['../.env', '.env'] }),
     PrismaModule,
     AuthModule,
+    OAuthModule,
     UsersModule,
     StorageModule,
     ProjectsModule,
