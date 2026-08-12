@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { randomBytes } from 'node:crypto';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { MailService } from '../mail/mail.service.js';
 import { RegisterDto } from './dto/register.dto.js';
@@ -123,7 +124,11 @@ export class AuthService {
 
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { verifyCode: code, verifyCodeExpiresAt: codeExpiresAt, verifyAttemptCount: 0 },
+      data: {
+        verifyCode: code,
+        verifyCodeExpiresAt: codeExpiresAt,
+        verifyAttemptCount: 0,
+      },
     });
 
     await this.mailService.sendVerificationCode(user.email, code);
@@ -143,15 +148,21 @@ export class AuthService {
     }
 
     if (user.verifyAttemptCount >= 5) {
-      throw new BadRequestException('Too many failed attempts. Request a new code.');
+      throw new BadRequestException(
+        'Too many failed attempts. Request a new code.',
+      );
     }
 
     if (!user.verifyCode || !user.verifyCodeExpiresAt) {
-      throw new BadRequestException('No verification code found. Request a new one.');
+      throw new BadRequestException(
+        'No verification code found. Request a new one.',
+      );
     }
 
     if (new Date() > user.verifyCodeExpiresAt) {
-      throw new BadRequestException('Verification code expired. Request a new one.');
+      throw new BadRequestException(
+        'Verification code expired. Request a new one.',
+      );
     }
 
     if (user.verifyCode !== dto.code) {
@@ -175,11 +186,39 @@ export class AuthService {
     return this.generateTokens(user);
   }
 
+  async findOrCreateOAuthUser(
+    provider: 'google' | 'github',
+    profile: { email: string; name: string; avatarUrl?: string | null },
+  ) {
+    const existing = await this.prisma.user.findUnique({
+      where: { email: profile.email },
+    });
+    if (existing) {
+      return this.generateTokens(existing);
+    }
+
+    const placeholderHash = await bcrypt.hash(
+      randomBytes(32).toString('hex'),
+      12,
+    );
+
+    const user = await this.prisma.user.create({
+      data: {
+        email: profile.email,
+        name: profile.name,
+        passwordHash: placeholderHash,
+        emailVerified: true,
+      },
+    });
+
+    return this.generateTokens(user);
+  }
+
   private generateCode(): string {
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
 
-  private generateTokens(user: {
+  generateTokens(user: {
     id: string;
     email: string;
     name: string;
