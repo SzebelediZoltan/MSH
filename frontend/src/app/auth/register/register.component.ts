@@ -10,6 +10,7 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmLabel } from '@spartan-ng/helm/label';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import { AuthService } from '../../core/services/auth.service';
+import { API_BASE_URL } from '../../core/services/api.service';
 
 @Component({
   selector: 'app-register',
@@ -34,7 +35,9 @@ export class RegisterComponent {
   private router = inject(Router);
 
   error = '';
+  oauthError = '';
   loading = signal(false);
+  oauthLoading = signal<string | null>(null);
   showPassword = signal(false);
   showConfirmPassword = signal(false);
 
@@ -65,6 +68,12 @@ export class RegisterComponent {
         this.error = err.error?.message || 'Registration failed';
       },
     });
+  }
+
+  oauthLogin(provider: 'google' | 'github'): void {
+    this.oauthError = '';
+    this.oauthLoading.set(provider);
+    window.location.href = `${API_BASE_URL}/auth/${provider}`;
   }
 
   private passwordsMatch(group: AbstractControl): null | { mismatch: true } {

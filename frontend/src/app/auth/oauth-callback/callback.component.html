@@ -1,0 +1,23 @@
+<div class="flex min-h-dvh items-center justify-center bg-background">
+  <div hlmCard class="w-full max-w-sm">
+    <div hlmCardHeader class="items-center pb-2">
+      @if (processing()) {
+        <hlm-spinner class="mb-2 h-10 w-10 text-primary" />
+        <h3 hlmCardTitle class="text-xl">Signing you in…</h3>
+        <p hlmCardDescription>Fetching your account</p>
+      } @else {
+        <ng-icon name="lucideAlertCircle" class="mb-2 h-10 w-10 text-destructive" />
+        <h3 hlmCardTitle class="text-xl">Something went wrong</h3>
+        <p hlmCardDescription class="text-destructive">{{ error() }}</p>
+      }
+    </div>
+    @if (!processing()) {
+      <div hlmCardFooter class="justify-center">
+        <button hlmBtn type="button" class="w-full" (click)="backToLogin()">
+          <ng-icon name="lucideArrowRight" class="mr-2 h-4 w-4" />
+          Back to login
+        </button>
+      </div>
+    }
+  </div>
+</div>
