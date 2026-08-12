@@ -12,6 +12,22 @@
     @if (!collapsed()) {
       <span class="text-sidebar-foreground text-lg font-semibold tracking-tight">MSH</span>
     }
+    <div class="flex-1"></div>
+    <button
+      hlmBtn
+      variant="ghost"
+      size="icon"
+      class="h-8 w-8 shrink-0"
+      (click)="toggleTheme()"
+      [hlmTooltip]="isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+      [position]="'right'"
+    >
+      @if (isDark()) {
+        <ng-icon name="lucideSun" class="h-4 w-4" />
+      } @else {
+        <ng-icon name="lucideMoon" class="h-4 w-4" />
+      }
+    </button>
   </div>
 
   <nav class="flex-1 space-y-1 p-2">

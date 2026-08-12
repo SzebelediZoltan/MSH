@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { environment } from '../../../../environments/environment';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
@@ -17,6 +18,8 @@ import {
   lucideChevronsLeft,
   lucideChevronsRight,
   lucideLogOut,
+  lucideSun,
+  lucideMoon,
 } from '@ng-icons/lucide';
 
 @Component({
@@ -41,17 +44,21 @@ import {
       lucideChevronsLeft,
       lucideChevronsRight,
       lucideLogOut,
+      lucideSun,
+      lucideMoon,
     }),
   ],
   templateUrl: './sidebar.component.html',
 })
 export class SidebarComponent implements OnInit {
   private auth = inject(AuthService);
+  private theme = inject(ThemeService);
   private router = inject(Router);
 
   collapsed = signal(false);
   currentUser = signal<User | null>(null);
   isAdmin = signal(false);
+  isDark = signal(this.theme.theme === 'dark');
   minioPublicUrl = environment.minioPublicUrl;
 
   ngOnInit(): void {
@@ -63,6 +70,10 @@ export class SidebarComponent implements OnInit {
 
   toggle(): void {
     this.collapsed.update((v) => !v);
+  }
+
+  toggleTheme(): void {
+    this.isDark.set(this.theme.toggle() === 'dark');
   }
 
   logout(): void {
